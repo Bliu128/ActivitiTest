@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.activiti.dao.TestAlarmDao">
+
+    <resultMap type="com.example.activiti.entity.TestAlarm" id="TestAlarmMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="aralemName" column="aralem_name" jdbcType="VARCHAR"/>
+        <result property="dw" column="dw" jdbcType="INTEGER"/>
+        <result property="taskTime" column="task_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TestAlarmMap">
+        select *
+        from test_alarm
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TestAlarmMap">
+        select
+        idaralem_namedwtask_time
+        from test_alarm
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="aralemName != null and aralemName != ''">
+                and aralem_name = #{aralemName}
+            </if>
+            <if test="dw != null">
+                and dw = #{dw}
+            </if>
+            <if test="taskTime != null">
+                and task_time = #{taskTime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from test_alarm
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="aralemName != null and aralemName != ''">
+                and aralem_name = #{aralemName}
+            </if>
+            <if test="dw != null">
+                and dw = #{dw}
+            </if>
+            <if test="taskTime != null">
+                and task_time = #{taskTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into test_alarm(aralem_namedwtask_time)
+        values (#{aralemName}#{dw}#{taskTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into test_alarm(aralem_namedwtask_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.aralemName}#{entity.dw}#{entity.taskTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into test_alarm(aralem_namedwtask_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.aralemName}#{entity.dw}#{entity.taskTime})
+        </foreach>
+        on duplicate key update
+        aralem_name = values(aralem_name)dw = values(dw)task_time = values(task_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update test_alarm
+        <set>
+            <if test="aralemName != null and aralemName != ''">
+                aralem_name = #{aralemName},
+            </if>
+            <if test="dw != null">
+                dw = #{dw},
+            </if>
+            <if test="taskTime != null">
+                task_time = #{taskTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from test_alarm
+        where id = #{id}
+    </delete>
+
+</mapper>
+
